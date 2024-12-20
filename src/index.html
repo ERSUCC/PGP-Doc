@@ -8,9 +8,24 @@
         <script src="main.js" defer></script>
     </head>
     <body>
-        <main id="container">
-            <h1 id="text">Hello, World!</h1>
-            <button id="toggle" onclick="toggleColors()">Toggle Colors</button>
+        <div data-tauri-drag-region class="titlebar">
+            <div data-tauri-drag-region class="titlebar-left">
+                <div data-tauri-drag-region class="titlebar-title">PGP Doc</div>
+                <button class="titlebar-button" id="menu-file">File</button>
+            </div>
+            <div data-tauri-drag-region class="titlebar-right">
+                <div class="titlebar-button" id="titlebar-minimize">
+                    <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+                </div>
+                <div class="titlebar-button" id="titlebar-maximize">
+                    <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+                </div>
+                <div class="titlebar-button" id="titlebar-close">
+                    <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+                </div>
+            </div>
+        </div>
+        <main class="container">
         </main>
     </body>
 </html>

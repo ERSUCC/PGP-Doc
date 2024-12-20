@@ -1,14 +1,55 @@
 const { invoke } = window.__TAURI__.core;
+const { getCurrentWindow } = window.__TAURI__.window;
+const { Menu } = window.__TAURI__.menu;
+const { message, open, save } = window.__TAURI__.dialog;
 
-let container;
-let text;
+const appWindow = getCurrentWindow();
 
-async function toggleColors() {
-    container.style.backgroundColor = await invoke("toggle_color", { color: window.getComputedStyle(container).backgroundColor });
-    text.style.color = await invoke("toggle_color", { color: window.getComputedStyle(text).color });
+document.getElementById("titlebar-minimize").addEventListener("click", () => appWindow.minimize());
+document.getElementById("titlebar-maximize").addEventListener("click", () => appWindow.toggleMaximize());
+document.getElementById("titlebar-close").addEventListener("click", () => appWindow.close());
+
+document.getElementById("menu-file").addEventListener("click", () => openFileMenu());
+
+async function handleError(error) {
+    await message(error.message, { title: "Error", kind: "error" });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-    container = document.querySelector("#container");
-    text = document.querySelector("#text");
-});
+async function openFileMenu() {
+    let menu = await Menu.new({
+        items: [
+            { text: "New Document", action: newDocument },
+            { item: "Separator" },
+            { text: "Open Document", action: openDocument },
+            { item: "Separator" },
+            { text: "Save Document", action: saveDocument },
+            { text: "Save Document As", action: saveDocumentAs },
+        ]
+    })
+
+    menu.popup();
+}
+
+function newDocument() {
+    invoke("new_document").catch(handleError);
+}
+
+async function openDocument() {
+    let file = await open({ multiple: false, directory: false });
+
+    if (file != null) {
+        invoke("open_document", { path: file }).catch(handleError);
+    }
+}
+
+function saveDocument() {
+    invoke("save_document").catch(handleError);
+}
+
+async function saveDocumentAs() {
+    let file = await save();
+
+    if (file != null) {
+        invoke("save_document_as", { path: file }).catch(handleError);
+    }
+}
